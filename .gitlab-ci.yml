@@ -1,0 +1,16 @@
+# .gitlab-ci.yml
+
+# Der Job, der ausgeführt wird, wenn du Änderungen an deinem Repository vornimmst
+stages:
+  - deploy
+
+pages:
+  stage: deploy
+  script:
+    - mkdir .public
+    - cp -r * .public
+  artifacts:
+    paths:
+      - .public
+  only:
+    - main  # Hier kannst du den Branch spezifizieren (z.B. `main` oder `master`), von dem aus deployt wird
