@@ -1,7 +1,9 @@
-// Initialisierung der placedComponents-Variable (speichert alle platzierten Komponenten)
+// Initialisierung der placedComponents-Variable
 let placedComponents = [];
 let gridSize = 10;
 let grid = [];
+
+// Definiere die Komponenten
 let components = [
   {
     name: "CPU-Kern",
@@ -11,7 +13,7 @@ let components = [
     area: 2,
     perf: 1,
     tag: "cpu",
-    coreCount: 1,
+    coreCount: 1, // Jeder CPU-Kern hat standardmäßig 1 Kern
     minWidth: 2,
     maxWidth: 6,
     maxHeight: 2,
@@ -141,37 +143,7 @@ function renderComponentList() {
       Punkte: ${comp.points}<br>
       Energie: ${comp.energy}, Fläche: ${comp.area}, Leistung: ${comp.perf}`;
 
-    if (comp.tag === "cpu") {
-      componentHTML += `
-        <label for="coreCount${i}">Kernanzahl:</label>
-        <input type="number" id="coreCount${i}" min="1" max="16" value="${comp.coreCount}" data-index="${i}">
-        <br><label>Breite: ${comp.getDims().width}</label><br><label>Höhe: ${comp.getDims().height}</label>
-      `;
-    }
-    if (comp.tag === "ai") {
-      componentHTML += `
-        <label for="tops${i}">TOPS:</label>
-        <input type="number" id="tops${i}" min="1" max="100" value="${comp.tops}" data-index="${i}">
-        <br><label>Breite: ${comp.getDims().width}</label><br><label>Höhe: ${comp.getDims().height}</label>
-      `;
-    }
-
     div.innerHTML = componentHTML;
-
-    // Event-Listener für Eingabefelder
-    if (comp.tag === "cpu") {
-      div.querySelector(`#coreCount${i}`).addEventListener("input", (e) => {
-        comp.coreCount = parseInt(e.target.value) || 1;
-        rerender();
-      });
-    }
-    if (comp.tag === "ai") {
-      div.querySelector(`#tops${i}`).addEventListener("input", (e) => {
-        comp.tops = parseInt(e.target.value) || 10;
-        rerender();
-      });
-    }
-
     div.addEventListener("dragstart", e => {
       e.dataTransfer.setData("compIndex", i);
     });
@@ -199,7 +171,6 @@ function handleDrop(e) {
   const y = parseInt(e.target.dataset.y);
 
   if (canPlace(x, y, comp)) {
-    removeIfPresent(comp);
     placeComponent(x, y, comp);
     updateStats();
   } else {
@@ -234,10 +205,6 @@ function placeComponent(x, y, comp) {
 
       if (dx === 0 && dy === 0) {
         cell.el.innerHTML = `<span class="placed">${comp.shortName}</span>`;
-        cell.el.setAttribute('draggable', true);
-        cell.el.addEventListener("dragstart", e => {
-          e.dataTransfer.setData("compIndex", components.indexOf(comp));
-        });
       } else {
         cell.el.innerHTML = '';
       }
@@ -274,7 +241,6 @@ function updateStats() {
     perf += c.perf;
   });
 
-  // Budget und Leistungsanforderungen
   document.getElementById("points").textContent = points;
   document.getElementById("energy").textContent = energy;
   document.getElementById("area").textContent = area;
