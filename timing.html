@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <title>Chipdesigner Pro – Timing-Level</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+<main>
+  <div class="task-selector" style="margin-bottom:18px;">
+    <h2>Level 2: Backend / Timing & Aufgabenplanung</h2>
+    <div class="task-desc" style="max-width:700px;">
+      In diesem Level planst du die Ausführung deiner Chip-Jobs (z.B. CPU-Rechnung, Kommunikation, KI-Task) im Zeitverlauf. Ordne Aufgaben so, dass alle im Zeitrahmen abgeschlossen werden und das Energie-Budget eingehalten wird. Du kannst Start- und Endzeit editieren. 
+    </div>
+  </div>
+  <div class="game-wrapper" style="flex-direction:column; align-items:center; max-width: 900px;">
+    <div class="task-scheduler" style="width:100%;">
+      <table id="taskTable">
+        <thead>
+          <tr>
+            <th>Aufgabe</th>
+            <th>Ressourcen</th>
+            <th>Benötigte Zeit</th>
+            <th>Verbrauchte Energie</th>
+            <th>Startzeit</th>
+            <th>Endzeit</th>
+          </tr>
+        </thead>
+        <tbody>
+          <!-- Wird per JS gefüllt -->
+        </tbody>
+      </table>
+    </div>
+    <div class="progress-bar" style="width:100%;margin-top:20px;">
+      <label for="taskProgress">Gesamt-Fortschritt:</label>
+      <progress id="taskProgress" max="100" value="0" style="width: 400px; height: 24px;"></progress>
+    </div>
+    <div id="timingResult" style="margin-top:18px;font-size:1.1em;"></div>
+    <div style="text-align:center; margin-top: 38px;">
+      <a href="index.html" class="next-button">&larr; Zurück zum Layout-Level</a>
+    </div>
+  </div>
+</main>
+<script src="timing.js"></script>
+</body>
+</html>

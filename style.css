@@ -137,3 +137,19 @@ input[type="number"] {
   width: 60px;
   font-size: 1em;
 }
+.next-button {
+  display: inline-block;
+  margin-top: 18px;
+  background: #5e81ac;
+  color: #fff;
+  padding: 12px 32px;
+  font-size: 1.2em;
+  border-radius: 10px;
+  text-decoration: none;
+  font-weight: bold;
+  box-shadow: 0 2px 8px #5e81ac40;
+  transition: background 0.2s;
+}
+.next-button:hover {
+  background: #4c6a92;
+}
