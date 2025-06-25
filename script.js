@@ -1,105 +1,25 @@
-// Initialisierung der placedComponents-Variable
-let placedComponents = [];
+// Aufgaben-Definition
+const tasks = {
+  task1: { name: "Standard", points: 100, energy: 10, area: 12 },
+  task2: { name: "High Performance", points: 200, energy: 30, area: 20 },
+  task3: { name: "Low Power", points: 80, energy: 5, area: 10 }
+};
+let currentTask = tasks.task1;
+
+// Komponenten-Definition
+const components = [
+  { name: "CPU-Kern", shortName: "CPU", points: 15, energy: 2, area: 2, perf: 1, tag: "cpu", width: 2, height: 1 },
+  { name: "Bluetooth LE", shortName: "BT", points: 20, energy: 2, area: 2, perf: 1, tag: "com", width: 2, height: 1 },
+  { name: "GPS-Modul", shortName: "GPS", points: 30, energy: 4, area: 3, perf: 2, tag: "com", width: 3, height: 1 },
+  { name: "AI-Beschleuniger", shortName: "AI", points: 30, energy: 3, area: 4, perf: 4, tag: "ai", width: 2, height: 2 },
+  { name: "Flash-Speicher", shortName: "FS", points: 15, energy: 1, area: 2, perf: 1, tag: "mem", width: 2, height: 1 },
+  { name: "Sicherheitsblock", shortName: "Sec", points: 10, energy: 1, area: 1, perf: 1, tag: "sec", width: 1, height: 1 }
+];
+
 let gridSize = 10;
 let grid = [];
-
-// Definiere die Komponenten
-let components = [
-  {
-    name: "CPU-Kern",
-    shortName: "CPU",
-    points: 15,
-    energy: 2,
-    area: 2,
-    perf: 1,
-    tag: "cpu",
-    coreCount: 1, // Jeder CPU-Kern hat standardmäßig 1 Kern
-    minWidth: 2,
-    maxWidth: 6,
-    maxHeight: 2,
-    getDims: function() {
-      let total = this.coreCount * this.minWidth;
-      if (total <= this.maxWidth) {
-        return { width: total, height: 1 };
-      } else {
-        let w = this.maxWidth;
-        let h = Math.ceil(total / w);
-        return { width: w, height: h };
-      }
-    }
-  },
-  {
-    name: "Bluetooth LE",
-    shortName: "BT",
-    points: 20,
-    energy: 2,
-    area: 2,
-    perf: 1,
-    tag: "com",
-    width: 2,
-    height: 1,
-    getDims: function() { return { width: 2, height: 1 }; }
-  },
-  {
-    name: "GPS-Modul",
-    shortName: "GPS",
-    points: 30,
-    energy: 4,
-    area: 3,
-    perf: 2,
-    tag: "com",
-    width: 3,
-    height: 1,
-    getDims: function() { return { width: 3, height: 1 }; }
-  },
-  {
-    name: "AI-Beschleuniger",
-    shortName: "AI",
-    points: 30,
-    energy: 3,
-    area: 4,
-    perf: 4,
-    tag: "ai",
-    tops: 10,
-    minWidth: 2,
-    maxWidth: 4,
-    maxHeight: 2,
-    getDims: function() {
-      let total = Math.ceil(this.tops / 10) * this.minWidth;
-      if (total <= this.maxWidth) {
-        return { width: total, height: 1 };
-      } else {
-        let w = this.maxWidth;
-        let h = Math.ceil(total / w);
-        return { width: w, height: h };
-      }
-    }
-  },
-  {
-    name: "Flash-Speicher",
-    shortName: "FS",
-    points: 15,
-    energy: 1,
-    area: 2,
-    perf: 1,
-    tag: "mem",
-    width: 2,
-    height: 1,
-    getDims: function() { return { width: 2, height: 1 }; }
-  },
-  {
-    name: "Sicherheitsblock",
-    shortName: "Sec",
-    points: 10,
-    energy: 1,
-    area: 1,
-    perf: 1,
-    tag: "sec",
-    width: 1,
-    height: 1,
-    getDims: function() { return { width: 1, height: 1 }; }
-  }
-];
+let placedComponents = [];
+let uniqueId = 1;
 
 // DOM-Elemente
 const gridEl = document.getElementById('chipGrid');
@@ -107,11 +27,45 @@ const componentList = document.getElementById('componentList');
 const sizeSelect = document.getElementById('gridSizeSelect');
 const taskSelect = document.getElementById('taskSelect');
 
-// Grid erstellen
+// Task-Auswahl Dropdown aufbauen
+if (taskSelect) {
+  taskSelect.innerHTML = "";
+  for (const [key, t] of Object.entries(tasks)) {
+    const opt = document.createElement("option");
+    opt.value = key;
+    opt.textContent = `Aufgabe: ${t.name}`;
+    taskSelect.appendChild(opt);
+  }
+  taskSelect.addEventListener("change", () => {
+    currentTask = tasks[taskSelect.value];
+    updateStats();
+  });
+}
+
+// Komponenten-Liste rendern (draggable)
+function renderComponentList() {
+  componentList.innerHTML = '';
+  components.forEach((comp, i) => {
+    const div = document.createElement('div');
+    div.className = 'component';
+    div.dataset.index = i;
+    div.style.background = getColor(comp.tag);
+    div.setAttribute('draggable', true);
+    div.innerHTML = `<strong>${comp.name}</strong>
+      Punkte: ${comp.points}<br>
+      Energie: ${comp.energy}, Fläche: ${comp.area}, Leistung: ${comp.perf}`;
+    div.addEventListener("dragstart", e => {
+      e.dataTransfer.setData("compIndex", i);
+    });
+    componentList.appendChild(div);
+  });
+}
+
+// Grid bauen
 function buildGrid() {
   grid = [];
   gridEl.innerHTML = '';
-  gridEl.style.gridTemplateColumns = `repeat(${gridSize}, 40px)`;  // 10 Zellen pro Zeile
+  gridEl.style.gridTemplateColumns = `repeat(${gridSize}, 40px)`;
   gridEl.style.gridTemplateRows = `repeat(${gridSize}, 40px)`;
 
   for (let y = 0; y < gridSize; y++) {
@@ -123,47 +77,20 @@ function buildGrid() {
       cell.dataset.y = y;
       cell.addEventListener("dragover", e => e.preventDefault());
       cell.addEventListener("drop", handleDrop);
-      grid[y][x] = { occupied: false, el: cell, compId: null };
+      grid[y][x] = { occupied: false, el: cell, compId: null, instanceId: null };
       gridEl.appendChild(cell);
     }
   }
 }
 
-// Komponenten rendern
-function renderComponentList() {
-  componentList.innerHTML = '';
-  components.forEach((comp, i) => {
-    const div = document.createElement('div');
-    div.className = 'component';
-    div.dataset.index = i;
-    div.style.background = getColor(comp.tag);
-    div.setAttribute('draggable', true);
-
-    let componentHTML = `<strong>${comp.name}</strong>
-      Punkte: ${comp.points}<br>
-      Energie: ${comp.energy}, Fläche: ${comp.area}, Leistung: ${comp.perf}`;
-
-    div.innerHTML = componentHTML;
-    div.addEventListener("dragstart", e => {
-      e.dataTransfer.setData("compIndex", i);
-    });
-
-    componentList.appendChild(div);
-  });
-}
-
-// Farbe basierend auf dem Tag der Komponente
+// Farben nach Tag
 function getColor(tag) {
   return {
-    cpu: "#5e81ac",
-    com: "#a3be8c",
-    ai: "#b48ead",
-    sec: "#ebcb8b",
-    mem: "#d08770"
+    cpu: "#5e81ac", com: "#a3be8c", ai: "#b48ead", sec: "#ebcb8b", mem: "#d08770"
   }[tag] || "#d8dee9";
 }
 
-// Handhabung des Drag-and-Drop
+// Drag & Drop Handling
 function handleDrop(e) {
   const index = parseInt(e.dataTransfer.getData("compIndex"));
   const comp = components[index];
@@ -178,66 +105,70 @@ function handleDrop(e) {
   }
 }
 
-// Prüfen, ob eine Komponente an der gegebenen Position platziert werden kann
+// Prüfung, ob Platzieren möglich ist
 function canPlace(x, y, comp) {
-  const dims = comp.getDims();
-  if (x + dims.width > gridSize || y + dims.height > gridSize) return false;
-  for (let dy = 0; dy < dims.height; dy++) {
-    for (let dx = 0; dx < dims.width; dx++) {
-      const targetCell = grid[y + dy][x + dx];
-      if (targetCell.occupied && targetCell.compId !== comp.name) return false;
+  if (x + comp.width > gridSize || y + comp.height > gridSize) return false;
+  for (let dy = 0; dy < comp.height; dy++) {
+    for (let dx = 0; dx < comp.width; dx++) {
+      if (grid[y + dy][x + dx].occupied) return false;
     }
   }
   return true;
 }
 
-// Platzieren der Komponente
+// Platzieren einer Komponente (jede Instanz hat eigene ID!)
 function placeComponent(x, y, comp) {
-  const dims = comp.getDims();
-  placedComponents.push({ ...comp, x, y });
-  for (let dy = 0; dy < dims.height; dy++) {
-    for (let dx = 0; dx < dims.width; dx++) {
+  const instanceId = uniqueId++;
+  placedComponents.push({ ...comp, x, y, id: instanceId });
+  for (let dy = 0; dy < comp.height; dy++) {
+    for (let dx = 0; dx < comp.width; dx++) {
       const cell = grid[y + dy][x + dx];
       cell.occupied = true;
       cell.compId = comp.name;
+      cell.instanceId = instanceId;
       cell.el.className = 'cell placed';
       cell.el.style.background = getColor(comp.tag);
-
       if (dx === 0 && dy === 0) {
         cell.el.innerHTML = `<span class="placed">${comp.shortName}</span>`;
+        // Rechtsklick zum Entfernen
+        cell.el.oncontextmenu = function(e) {
+          e.preventDefault();
+          removeComponent(instanceId);
+        };
       } else {
         cell.el.innerHTML = '';
-      }
-    }
-  }
-}
-
-// Entfernen von Komponenten
-function removeIfPresent(comp) {
-  placedComponents = placedComponents.filter(c => c.name !== comp.name);
-  for (let row of grid) {
-    for (let cell of row) {
-      if (cell.compId === comp.name) {
-        cell.occupied = false;
-        cell.compId = null;
-        cell.el.className = 'cell';
-        cell.el.innerHTML = '';
-        cell.el.style.background = '';
-        cell.el.removeAttribute('draggable');
         cell.el.oncontextmenu = null;
       }
     }
   }
 }
 
-// Aktualisieren der Statistiken
+// Entferne EINE Instanz per ID (z.B. bei Rechtsklick)
+function removeComponent(instanceId) {
+  placedComponents = placedComponents.filter(c => c.id !== instanceId);
+  for (let row of grid) {
+    for (let cell of row) {
+      if (cell.instanceId === instanceId) {
+        cell.occupied = false;
+        cell.compId = null;
+        cell.instanceId = null;
+        cell.el.className = 'cell';
+        cell.el.innerHTML = '';
+        cell.el.style.background = '';
+        cell.el.oncontextmenu = null;
+      }
+    }
+  }
+  updateStats();
+}
+
+// Statistiken und Budget überprüfen
 function updateStats() {
   let points = 0, energy = 0, area = 0, perf = 0;
   placedComponents.forEach(c => {
-    const dims = c.getDims();
     points += c.points;
     energy += c.energy;
-    area += dims.width * dims.height;
+    area += c.width * c.height;
     perf += c.perf;
   });
 
@@ -247,9 +178,9 @@ function updateStats() {
   document.getElementById("perf").textContent = perf;
 
   const messages = [];
-  if (points > 100) messages.push("❌ Punkte zu hoch");
-  if (energy > 10) messages.push("❌ Energie zu hoch");
-  if (area > 12) messages.push("❌ Fläche zu groß");
+  if (points > currentTask.points) messages.push("❌ Punkte zu hoch");
+  if (energy > currentTask.energy) messages.push("❌ Energie zu hoch");
+  if (area > currentTask.area) messages.push("❌ Fläche zu groß");
 
   document.getElementById("result").innerHTML =
     messages.length === 0
@@ -257,7 +188,7 @@ function updateStats() {
       : `<span class="warning">${messages.join("<br>")}</span>`;
 }
 
-// Beim Ändern der Chipgröße neu rendern
+// Größe ändern
 sizeSelect.addEventListener("change", () => {
   gridSize = parseInt(sizeSelect.value);
   rerender();
@@ -265,15 +196,18 @@ sizeSelect.addEventListener("change", () => {
 
 function rerender() {
   buildGrid();
-  placedComponents.forEach(pc => {
-    const comp = components.find(c => c.name === pc.name);
-    if (canPlace(pc.x, pc.y, comp)) {
-      placeComponent(pc.x, pc.y, comp);
+  // Alle bereits platzierten Instanzen wieder platzieren (sofern Platz)
+  const toReplace = placedComponents.slice();
+  placedComponents = [];
+  for (const c of toReplace) {
+    if (canPlace(c.x, c.y, c)) {
+      placeComponent(c.x, c.y, c);
     }
-  });
+  }
   updateStats();
 }
 
-// Initialisierung der Seite
+// Initialisierung
 renderComponentList();
 buildGrid();
+updateStats();
