@@ -1,12 +1,24 @@
-// Aufgaben-Definition
+// Aufgaben mit Beschreibung und Budgets
 const tasks = {
-  task1: { name: "Standard", points: 100, energy: 10, area: 12, description: "Gestalte einen Standard-Chip mit den vorgegebenen Komponenten." },
-  task2: { name: "High Performance", points: 200, energy: 30, area: 20, description: "Erstelle einen High-Performance-Chip mit maximaler Leistung." },
-  task3: { name: "Low Power", points: 80, energy: 5, area: 10, description: "Design einen Chip mit minimalem Energieverbrauch." }
+  task1: {
+    name: "Standard",
+    desc: "Entwerfe einen Standard-Chip mit ausgewogenem Verhältnis von Leistung, Energie und Fläche.",
+    points: 100, energy: 10, area: 12
+  },
+  task2: {
+    name: "High Performance",
+    desc: "Maximiere die Leistung für High-Performance-Anwendungen. Großes Budget, aber auch anspruchsvoll.",
+    points: 200, energy: 30, area: 20
+  },
+  task3: {
+    name: "Low Power",
+    desc: "Baue einen Chip für besonders niedrigen Energieverbrauch und kleine Fläche.",
+    points: 80, energy: 5, area: 10
+  }
 };
 let currentTask = tasks.task1;
 
-// Komponenten-Definition
+// Komponenten
 const components = [
   { name: "CPU-Kern", shortName: "CPU", points: 15, energy: 2, area: 2, perf: 1, tag: "cpu", width: 2, height: 1 },
   { name: "Bluetooth LE", shortName: "BT", points: 20, energy: 2, area: 2, perf: 1, tag: "com", width: 2, height: 1 },
@@ -21,36 +33,43 @@ let grid = [];
 let placedComponents = [];
 let uniqueId = 1;
 
-// DOM-Elemente
+// DOM
 const gridEl = document.getElementById('chipGrid');
 const componentList = document.getElementById('componentList');
 const sizeSelect = document.getElementById('gridSizeSelect');
 const taskSelect = document.getElementById('taskSelect');
-const taskDescriptionEl = document.getElementById('taskDescription');
-const pointsMaxEl = document.getElementById("pointsMax");
-const energyMaxEl = document.getElementById("energyMax");
-const areaMaxEl = document.getElementById("areaMax");
+const taskDescEl = document.getElementById('taskDesc');
 
-// Aufgabe wechseln
-taskSelect.addEventListener("change", () => {
-  currentTask = tasks[taskSelect.value];
-  updateStats();
-  updateTaskDescription();
-  updateBudgetLabels();
-});
-
-// Aufgabentext und Budget aktualisieren
-function updateTaskDescription() {
-  taskDescriptionEl.textContent = currentTask.description;
+// ----------- Aufgaben-Auswahl aufbauen -----------
+if (taskSelect) {
+  taskSelect.innerHTML = "";
+  for (const [key, t] of Object.entries(tasks)) {
+    const opt = document.createElement("option");
+    opt.value = key;
+    opt.textContent = t.name;
+    taskSelect.appendChild(opt);
+  }
+  taskSelect.value = "task1";
+  taskSelect.addEventListener("change", () => {
+    currentTask = tasks[taskSelect.value];
+    updateStats();
+    updateBudgetLabels();
+    updateTaskDesc();
+  });
 }
 
+function updateTaskDesc() {
+  if (taskDescEl && currentTask) {
+    taskDescEl.textContent = currentTask.desc;
+  }
+}
 function updateBudgetLabels() {
-  pointsMaxEl.textContent = currentTask.points;
-  energyMaxEl.textContent = currentTask.energy;
-  areaMaxEl.textContent = currentTask.area;
+  document.getElementById("pointsMax").textContent = currentTask.points;
+  document.getElementById("energyMax").textContent = currentTask.energy;
+  document.getElementById("areaMax").textContent = currentTask.area;
 }
 
-// Komponenten-Liste rendern
+// ----------- Komponentenliste rendern -----------
 function renderComponentList() {
   componentList.innerHTML = '';
   components.forEach((comp, i) => {
@@ -69,6 +88,7 @@ function renderComponentList() {
   });
 }
 
+// ----------- Spielfeld/GRID bauen -----------
 function buildGrid() {
   grid = [];
   gridEl.innerHTML = '';
@@ -90,12 +110,14 @@ function buildGrid() {
   }
 }
 
+// ----------- Farben je Komponententyp -----------
 function getColor(tag) {
   return {
     cpu: "#5e81ac", com: "#a3be8c", ai: "#b48ead", sec: "#ebcb8b", mem: "#d08770"
   }[tag] || "#d8dee9";
 }
 
+// ----------- Drag & Drop Handling -----------
 function handleDrop(e) {
   const index = parseInt(e.dataTransfer.getData("compIndex"));
   const comp = components[index];
@@ -163,6 +185,7 @@ function removeComponent(instanceId) {
   updateStats();
 }
 
+// ----------- Statistiken & Budget ----------
 function updateStats() {
   let points = 0, energy = 0, area = 0, perf = 0;
   placedComponents.forEach(c => {
@@ -188,7 +211,7 @@ function updateStats() {
       : `<span class="warning">${messages.join("<br>")}</span>`;
 }
 
-// Chipgröße ändern
+// ----------- Chipgröße ändern (Dropdown) ----------
 sizeSelect.addEventListener("change", () => {
   gridSize = parseInt(sizeSelect.value);
   rerender();
@@ -206,8 +229,9 @@ function rerender() {
   updateStats();
 }
 
-// Initialisierung
+// ----------- Initialisierung ----------
 renderComponentList();
 buildGrid();
-updateTaskDescription();
 updateBudgetLabels();
+updateTaskDesc();
+updateStats();
