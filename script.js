@@ -4,7 +4,7 @@ const tasks = {
   task2: { name: "High Performance", points: 200, energy: 30, area: 20 },
   task3: { name: "Low Power", points: 80, energy: 5, area: 10 }
 };
-let currentTask = tasks.task1;  // Standardaufgabe zu Beginn
+let currentTask = tasks.task1;
 
 // Komponenten-Definition
 const components = [
@@ -27,7 +27,7 @@ const componentList = document.getElementById('componentList');
 const sizeSelect = document.getElementById('gridSizeSelect');
 const taskSelect = document.getElementById('taskSelect');
 
-// Task-Auswahl Dropdown aufbauen
+// Aufgaben-Auswahl Dropdown initialisieren (falls noch nicht im HTML)
 if (taskSelect) {
   taskSelect.innerHTML = "";
   for (const [key, t] of Object.entries(tasks)) {
@@ -36,13 +36,21 @@ if (taskSelect) {
     opt.textContent = `Aufgabe: ${t.name}`;
     taskSelect.appendChild(opt);
   }
+  taskSelect.value = "task1";
   taskSelect.addEventListener("change", () => {
     currentTask = tasks[taskSelect.value];
-    updateStats();  // Statistiken bei Aufgabenwechsel aktualisieren
+    updateStats();
+    updateBudgetLabels();
   });
 }
 
-// Komponenten-Liste rendern (draggable)
+function updateBudgetLabels() {
+  document.getElementById("pointsMax").textContent = currentTask.points;
+  document.getElementById("energyMax").textContent = currentTask.energy;
+  document.getElementById("areaMax").textContent = currentTask.area;
+}
+
+// Komponenten-Liste rendern
 function renderComponentList() {
   componentList.innerHTML = '';
   components.forEach((comp, i) => {
@@ -61,7 +69,6 @@ function renderComponentList() {
   });
 }
 
-// Grid bauen
 function buildGrid() {
   grid = [];
   gridEl.innerHTML = '';
@@ -83,18 +90,12 @@ function buildGrid() {
   }
 }
 
-// Farben nach Tag
 function getColor(tag) {
   return {
-    cpu: "#5e81ac",
-    com: "#a3be8c",
-    ai: "#b48ead",
-    sec: "#ebcb8b",
-    mem: "#d08770"
+    cpu: "#5e81ac", com: "#a3be8c", ai: "#b48ead", sec: "#ebcb8b", mem: "#d08770"
   }[tag] || "#d8dee9";
 }
 
-// Drag & Drop Handling
 function handleDrop(e) {
   const index = parseInt(e.dataTransfer.getData("compIndex"));
   const comp = components[index];
@@ -109,7 +110,6 @@ function handleDrop(e) {
   }
 }
 
-// Prüfung, ob Platzieren möglich ist
 function canPlace(x, y, comp) {
   if (x + comp.width > gridSize || y + comp.height > gridSize) return false;
   for (let dy = 0; dy < comp.height; dy++) {
@@ -120,7 +120,6 @@ function canPlace(x, y, comp) {
   return true;
 }
 
-// Platzieren einer Komponente (jede Instanz hat eigene ID!)
 function placeComponent(x, y, comp) {
   const instanceId = uniqueId++;
   placedComponents.push({ ...comp, x, y, id: instanceId });
@@ -134,7 +133,6 @@ function placeComponent(x, y, comp) {
       cell.el.style.background = getColor(comp.tag);
       if (dx === 0 && dy === 0) {
         cell.el.innerHTML = `<span class="placed">${comp.shortName}</span>`;
-        // Rechtsklick zum Entfernen
         cell.el.oncontextmenu = function(e) {
           e.preventDefault();
           removeComponent(instanceId);
@@ -147,7 +145,6 @@ function placeComponent(x, y, comp) {
   }
 }
 
-// Entferne EINE Instanz per ID (z.B. bei Rechtsklick)
 function removeComponent(instanceId) {
   placedComponents = placedComponents.filter(c => c.id !== instanceId);
   for (let row of grid) {
@@ -166,7 +163,6 @@ function removeComponent(instanceId) {
   updateStats();
 }
 
-// Statistiken und Budget überprüfen
 function updateStats() {
   let points = 0, energy = 0, area = 0, perf = 0;
   placedComponents.forEach(c => {
@@ -176,7 +172,6 @@ function updateStats() {
     perf += c.perf;
   });
 
-  // Anzeige der Statistiken
   document.getElementById("points").textContent = points;
   document.getElementById("energy").textContent = energy;
   document.getElementById("area").textContent = area;
@@ -193,7 +188,7 @@ function updateStats() {
       : `<span class="warning">${messages.join("<br>")}</span>`;
 }
 
-// Größe ändern
+// Chipgröße ändern
 sizeSelect.addEventListener("change", () => {
   gridSize = parseInt(sizeSelect.value);
   rerender();
@@ -201,7 +196,6 @@ sizeSelect.addEventListener("change", () => {
 
 function rerender() {
   buildGrid();
-  // Alle bereits platzierten Instanzen wieder platzieren (sofern Platz)
   const toReplace = placedComponents.slice();
   placedComponents = [];
   for (const c of toReplace) {
@@ -215,4 +209,5 @@ function rerender() {
 // Initialisierung
 renderComponentList();
 buildGrid();
+updateBudgetLabels();
 updateStats();
