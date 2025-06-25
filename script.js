@@ -4,7 +4,7 @@ const tasks = {
   task2: { name: "High Performance", points: 200, energy: 30, area: 20 },
   task3: { name: "Low Power", points: 80, energy: 5, area: 10 }
 };
-let currentTask = tasks.task1;
+let currentTask = tasks.task1;  // Standardaufgabe zu Beginn
 
 // Komponenten-Definition
 const components = [
@@ -38,7 +38,7 @@ if (taskSelect) {
   }
   taskSelect.addEventListener("change", () => {
     currentTask = tasks[taskSelect.value];
-    updateStats();
+    updateStats();  // Statistiken bei Aufgabenwechsel aktualisieren
   });
 }
 
@@ -86,7 +86,11 @@ function buildGrid() {
 // Farben nach Tag
 function getColor(tag) {
   return {
-    cpu: "#5e81ac", com: "#a3be8c", ai: "#b48ead", sec: "#ebcb8b", mem: "#d08770"
+    cpu: "#5e81ac",
+    com: "#a3be8c",
+    ai: "#b48ead",
+    sec: "#ebcb8b",
+    mem: "#d08770"
   }[tag] || "#d8dee9";
 }
 
@@ -172,6 +176,7 @@ function updateStats() {
     perf += c.perf;
   });
 
+  // Anzeige der Statistiken
   document.getElementById("points").textContent = points;
   document.getElementById("energy").textContent = energy;
   document.getElementById("area").textContent = area;
