@@ -1,28 +1,50 @@
+/* Grundlegende Einstellungen */
 body {
-  font-family: sans-serif;
+  font-family: Arial, sans-serif;
+  background-color: #f4f4f4;
+  margin: 0;
+  padding: 0;
   display: flex;
-  gap: 40px;
-  padding: 20px;
-  background: #f4f4f4;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  color: #333;
+}
+
+.container {
+  width: 80%;
+  max-width: 1200px;
+  text-align: center;
+}
+
+.task-selection {
+  margin-bottom: 20px;
+}
+
+h3 {
+  font-size: 24px;
+  margin-bottom: 10px;
+}
+
+select, p {
+  font-size: 16px;
+  margin: 10px 0;
+}
+
+/* Design für das Spielbereich */
+.game-area {
+  display: flex;
+  justify-content: center;
+  gap: 30px;
+  align-items: flex-start;
 }
 
 .sidebar {
   width: 260px;
-}
-
-.component {
-  padding: 8px;
-  margin-bottom: 10px;
-  background: #88c0d0;
-  border: 1px solid #444;
-  cursor: grab;
-  user-select: none;
-  display: flex;
-  flex-direction: column;
-}
-
-.component strong {
-  display: block;
+  background: #ffffff;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
 }
 
 .grid-container {
@@ -31,6 +53,11 @@ body {
   background: #aaa;
   border: 2px solid #333;
   position: relative;
+  max-width: 600px;
+  width: 100%;
+  grid-template-columns: repeat(10, 40px);
+  grid-template-rows: repeat(10, 40px);
+  margin-top: 20px;
 }
 
 .cell {
@@ -38,43 +65,61 @@ body {
   width: 40px;
   height: 40px;
   position: relative;
-  font-size: 15px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  text-align: center;
-  overflow: hidden;
   cursor: pointer;
 }
 
 .placed {
-  color: #222;
-  font-weight: bold;
-  font-size: 14px; /* Fixierte Schriftgröße */
+  font-size: 12px;
+  text-align: center;
+  color: black;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: #c0c0c0;
+  border-radius: 4px;
 }
 
+/* Für die Statistiken */
 .stats {
   margin-top: 20px;
-  font-size: 14px;
   background: #fff;
   padding: 10px;
   border: 1px solid #ccc;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  border-radius: 8px;
+  text-align: left;
 }
 
-.warning {
-  color: red;
-  font-weight: bold;
+#taskDescription {
+  font-size: 16px;
+  color: #555;
+  margin-top: 10px;
+}
+
+select {
+  padding: 5px;
+  font-size: 16px;
+}
+
+button {
+  background-color: #4CAF50;
+  color: white;
+  padding: 10px 20px;
+  border: none;
+  cursor: pointer;
+  font-size: 16px;
+  border-radius: 4px;
+  margin-top: 10px;
+}
+
+button:hover {
+  background-color: #45a049;
 }
 
 .ok {
   color: green;
-  font-weight: bold;
 }
 
-select, input {
-  margin-bottom: 10px;
-}
-
-input[type="number"] {
-  width: 50px;
+.warning {
+  color: red;
 }

@@ -1,8 +1,8 @@
 // Aufgaben-Definition
 const tasks = {
-  task1: { name: "Standard", points: 100, energy: 10, area: 12 },
-  task2: { name: "High Performance", points: 200, energy: 30, area: 20 },
-  task3: { name: "Low Power", points: 80, energy: 5, area: 10 }
+  task1: { name: "Standard", points: 100, energy: 10, area: 12, description: "Gestalte einen Standard-Chip mit den vorgegebenen Komponenten." },
+  task2: { name: "High Performance", points: 200, energy: 30, area: 20, description: "Erstelle einen High-Performance-Chip mit maximaler Leistung." },
+  task3: { name: "Low Power", points: 80, energy: 5, area: 10, description: "Design einen Chip mit minimalem Energieverbrauch." }
 };
 let currentTask = tasks.task1;
 
@@ -26,28 +26,28 @@ const gridEl = document.getElementById('chipGrid');
 const componentList = document.getElementById('componentList');
 const sizeSelect = document.getElementById('gridSizeSelect');
 const taskSelect = document.getElementById('taskSelect');
+const taskDescriptionEl = document.getElementById('taskDescription');
+const pointsMaxEl = document.getElementById("pointsMax");
+const energyMaxEl = document.getElementById("energyMax");
+const areaMaxEl = document.getElementById("areaMax");
 
-// Aufgaben-Auswahl Dropdown initialisieren (falls noch nicht im HTML)
-if (taskSelect) {
-  taskSelect.innerHTML = "";
-  for (const [key, t] of Object.entries(tasks)) {
-    const opt = document.createElement("option");
-    opt.value = key;
-    opt.textContent = `Aufgabe: ${t.name}`;
-    taskSelect.appendChild(opt);
-  }
-  taskSelect.value = "task1";
-  taskSelect.addEventListener("change", () => {
-    currentTask = tasks[taskSelect.value];
-    updateStats();
-    updateBudgetLabels();
-  });
+// Aufgabe wechseln
+taskSelect.addEventListener("change", () => {
+  currentTask = tasks[taskSelect.value];
+  updateStats();
+  updateTaskDescription();
+  updateBudgetLabels();
+});
+
+// Aufgabentext und Budget aktualisieren
+function updateTaskDescription() {
+  taskDescriptionEl.textContent = currentTask.description;
 }
 
 function updateBudgetLabels() {
-  document.getElementById("pointsMax").textContent = currentTask.points;
-  document.getElementById("energyMax").textContent = currentTask.energy;
-  document.getElementById("areaMax").textContent = currentTask.area;
+  pointsMaxEl.textContent = currentTask.points;
+  energyMaxEl.textContent = currentTask.energy;
+  areaMaxEl.textContent = currentTask.area;
 }
 
 // Komponenten-Liste rendern
@@ -209,5 +209,5 @@ function rerender() {
 // Initialisierung
 renderComponentList();
 buildGrid();
+updateTaskDescription();
 updateBudgetLabels();
-updateStats();

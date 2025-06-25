@@ -3,40 +3,49 @@
 <head>
   <meta charset="UTF-8">
   <title>Chipdesigner Pro</title>
-  <link rel="stylesheet" href="style.css"> <!-- Verlinkung der externen CSS-Datei -->
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <!-- Sidebar für Aufgaben und Grid-Größe -->
-  <div class="sidebar">
-    <h3>🔧 Komponenten</h3>
-    <div id="componentList"></div>
-    <h4>📐 Chipgröße</h4>
-    <select id="gridSizeSelect">
-      <option value="8">8×8</option>
-      <option value="10" selected>10×10</option>
-      <option value="12">12×12</option>
-    </select>
 
-    <h4>🎯 Aufgabe auswählen</h4>
+<div class="container">
+  <!-- Aufgabenbereich -->
+  <div class="task-selection">
+    <h3>🎯 Wähle deine Aufgabe</h3>
     <select id="taskSelect">
-      <option value="task1">Aufgabe 1: Standard</option>
-      <option value="task2">Aufgabe 2: Hochleistungs-Chip</option>
-      <option value="task3">Aufgabe 3: Geringer Energieverbrauch</option>
+      <option value="task1">Aufgabe: Standard</option>
+      <option value="task2">Aufgabe: Hochleistungs-Chip</option>
+      <option value="task3">Aufgabe: Geringer Energieverbrauch</option>
     </select>
+    <p id="taskDescription">Wähle eine Aufgabe, um mit dem Design deines Chips zu beginnen.</p>
   </div>
 
-  <!-- Chipfläche für das Grid -->
-  <div>
-    <h3>🔳 Chipfläche</h3>
-    <div id="chipGrid" class="grid-container"></div>
-    <div class="stats">
-      <p><strong>Punkte:</strong> <span id="points">0</span> / 100</p>
-      <p><strong>Energie:</strong> <span id="energy">0</span></p>
-      <p><strong>Fläche:</strong> <span id="area">0</span></p>
-      <p><strong>Leistung:</strong> <span id="perf">0</span></p>
-      <p id="result"></p>
+  <!-- Das Spiel -->
+  <div class="game-area">
+    <div class="sidebar">
+      <h3>🔧 Komponenten</h3>
+      <div id="componentList"></div>
+      <h4>📐 Chipgröße</h4>
+      <select id="gridSizeSelect">
+        <option value="8">8×8</option>
+        <option value="10" selected>10×10</option>
+        <option value="12">12×12</option>
+      </select>
+    </div>
+
+    <div>
+      <h3>🔳 Chipfläche</h3>
+      <div id="chipGrid" class="grid-container"></div>
+      <div class="stats">
+        <p><strong>Punkte:</strong> <span id="points">0</span> / <span id="pointsMax">100</span></p>
+        <p><strong>Energie:</strong> <span id="energy">0</span> / <span id="energyMax">10</span></p>
+        <p><strong>Fläche:</strong> <span id="area">0</span> / <span id="areaMax">12</span></p>
+        <p><strong>Leistung:</strong> <span id="perf">0</span></p>
+        <p id="result"></p>
+      </div>
     </div>
   </div>
-  <script src="script.js"></script> <!-- Verlinkung der externen JavaScript-Datei -->
+</div>
+
+<script src="script.js"></script>
 </body>
 </html>
