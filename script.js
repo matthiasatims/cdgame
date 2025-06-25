@@ -32,7 +32,6 @@ let gridSize = 10;
 let grid = [];
 let placedComponents = [];
 let uniqueId = 1;
-let dragInstanceId = null; // Für Drag von platzierten Komponenten
 
 // DOM
 const gridEl = document.getElementById('chipGrid');
@@ -41,6 +40,7 @@ const sizeSelect = document.getElementById('gridSizeSelect');
 const taskSelect = document.getElementById('taskSelect');
 const taskDescEl = document.getElementById('taskDesc');
 
+// Aufgaben-Auswahl Dropdown initialisieren
 if (taskSelect) {
   taskSelect.innerHTML = "";
   for (const [key, t] of Object.entries(tasks)) {
@@ -69,6 +69,7 @@ function updateBudgetLabels() {
   document.getElementById("areaMax").textContent = currentTask.area;
 }
 
+// Komponentenliste rendern
 function renderComponentList() {
   componentList.innerHTML = '';
   components.forEach((comp, i) => {
@@ -81,13 +82,14 @@ function renderComponentList() {
       Punkte: ${comp.points}<br>
       Energie: ${comp.energy}, Fläche: ${comp.area}, Leistung: ${comp.perf}`;
     div.addEventListener("dragstart", e => {
+      e.dataTransfer.setData("type", "component");
       e.dataTransfer.setData("compIndex", i);
-      e.dataTransfer.setData("fromGrid", "0");
     });
     componentList.appendChild(div);
   });
 }
 
+// Grid bauen
 function buildGrid() {
   grid = [];
   gridEl.innerHTML = '';
@@ -109,46 +111,43 @@ function buildGrid() {
   }
 }
 
+// Farben je Typ
 function getColor(tag) {
   return {
     cpu: "#5e81ac", com: "#a3be8c", ai: "#b48ead", sec: "#ebcb8b", mem: "#d08770"
   }[tag] || "#d8dee9";
 }
 
-// --- Drag & Drop ---
+// --- Drag & Drop / Platzieren und Verschieben ---
 function handleDrop(e) {
-  // Komponente aus Liste oder Grid?
-  const fromGrid = e.dataTransfer.getData("fromGrid");
-  if (fromGrid === "1") {
-    // Drag einer platzierten Instanz
-    const instanceId = Number(e.dataTransfer.getData("instanceId"));
-    const compData = placedComponents.find(c => c.id === instanceId);
-    if (!compData) return;
-    // Neue Position
-    const x = Number(e.target.dataset.x);
-    const y = Number(e.target.dataset.y);
-    // Vorübergehend entfernen
-    removeComponent(instanceId, false);
-    if (canPlace(x, y, compData)) {
-      placeComponent(x, y, compData, instanceId); // alte ID wiederverwenden!
-      updateStats();
-    } else {
-      // zurücksetzen auf alte Position
-      placeComponent(compData.x, compData.y, compData, instanceId);
-      updateStats();
-      alert("❌ Nicht genug Platz oder überlappt!");
-    }
-  } else {
-    // Drag aus Komponentenliste
+  const type = e.dataTransfer.getData("type");
+  const x = Number(e.target.dataset.x);
+  const y = Number(e.target.dataset.y);
+
+  if (type === "component") {
+    // Aus Komponentenliste
     const index = Number(e.dataTransfer.getData("compIndex"));
     const comp = components[index];
-    const x = Number(e.target.dataset.x);
-    const y = Number(e.target.dataset.y);
-
     if (canPlace(x, y, comp)) {
       placeComponent(x, y, comp);
       updateStats();
     } else {
+      alert("❌ Nicht genug Platz oder überlappt!");
+    }
+  } else if (type === "instance") {
+    // Verschieben einer bestehenden Instanz
+    const instanceId = Number(e.dataTransfer.getData("instanceId"));
+    const inst = placedComponents.find(c => c.id === instanceId);
+    if (!inst) return;
+    // Vorübergehend entfernen
+    removeComponent(instanceId, false);
+    if (canPlace(x, y, inst)) {
+      placeComponent(x, y, inst, instanceId);
+      updateStats();
+    } else {
+      // zurück auf alte Position
+      placeComponent(inst.x, inst.y, inst, instanceId);
+      updateStats();
       alert("❌ Nicht genug Platz oder überlappt!");
     }
   }
@@ -165,7 +164,6 @@ function canPlace(x, y, comp) {
 }
 
 function placeComponent(x, y, comp, forceId = null) {
-  // forceId wird für Drag aus Grid genutzt (gleiche Instanz wiederverwenden)
   const instanceId = forceId || (uniqueId++);
   placedComponents.push({ ...comp, x, y, id: instanceId });
   for (let dy = 0; dy < comp.height; dy++) {
@@ -178,11 +176,13 @@ function placeComponent(x, y, comp, forceId = null) {
       cell.el.style.background = getColor(comp.tag);
       if (dx === 0 && dy === 0) {
         cell.el.innerHTML = `<span class="placed">${comp.shortName}</span>`;
+        // Draggen einer Instanz ermöglichen
         cell.el.setAttribute('draggable', true);
         cell.el.ondragstart = function(ev) {
-          ev.dataTransfer.setData("fromGrid", "1");
+          ev.dataTransfer.setData("type", "instance");
           ev.dataTransfer.setData("instanceId", instanceId);
         };
+        // Rechtsklick zum Entfernen
         cell.el.oncontextmenu = function(e) {
           e.preventDefault();
           removeComponent(instanceId);
@@ -197,6 +197,7 @@ function placeComponent(x, y, comp, forceId = null) {
   }
 }
 
+// Entfernen einer Instanz (nur eine)
 function removeComponent(instanceId, update = true) {
   placedComponents = placedComponents.filter(c => c.id !== instanceId);
   for (let row of grid) {
