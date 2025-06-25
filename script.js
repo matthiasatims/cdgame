@@ -1,3 +1,54 @@
+let placedComponents = [];
+
+// Andere Variablen
+let gridSize = 10;
+let grid = [];
+
+// Die Funktion zum Aktualisieren des Grids
+function buildGrid() {
+  grid = [];
+  gridEl.innerHTML = '';
+  gridEl.style.gridTemplateColumns = `repeat(${gridSize}, 40px)`;  // 10 Zellen pro Zeile
+  gridEl.style.gridTemplateRows = `repeat(${gridSize}, 40px)`;
+
+  for (let y = 0; y < gridSize; y++) {
+    grid[y] = [];
+    for (let x = 0; x < gridSize; x++) {
+      const cell = document.createElement('div');
+      cell.className = 'cell';
+      cell.dataset.x = x;
+      cell.dataset.y = y;
+      cell.addEventListener("dragover", e => e.preventDefault());
+      cell.addEventListener("drop", handleDrop);
+      grid[y][x] = { occupied: false, el: cell, compId: null };
+      gridEl.appendChild(cell);
+    }
+  }
+}
+
+// Beispiel für das Hinzufügen einer Komponente ins Grid
+function placeComponent(x, y, comp) {
+  // Stelle sicher, dass placedComponents definiert ist
+  placedComponents.push({ ...comp, x, y });
+
+  for (let dy = 0; dy < comp.height; dy++) {
+    for (let dx = 0; dx < comp.width; dx++) {
+      const cell = grid[y + dy][x + dx];
+      cell.occupied = true;
+      cell.compId = comp.name;
+      cell.el.className = 'cell placed';
+      cell.el.style.background = getColor(comp.tag);
+
+      // Hier wird der Text in der Zelle angezeigt
+      if (dx === 0 && dy === 0) {
+        cell.el.innerHTML = `<span class="placed">${comp.shortName}</span>`;
+      } else {
+        cell.el.innerHTML = '';
+      }
+    }
+  }
+}
+
 // Aufgaben-Budgets
 const tasks = {
   task1: { points: 100, energy: 10, area: 12, performance: 10 },
