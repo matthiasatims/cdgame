@@ -18,27 +18,21 @@ const tasks = {
 };
 let currentTask = tasks.task1;
 
-// Komponenten
-const components = [
-  { name: "CPU-Kern", shortName: "CPU", points: 15, energy: 2, area: 2, perf: 1, tag: "cpu", width: 2, height: 1 },
-  { name: "Bluetooth LE", shortName: "BT", points: 20, energy: 2, area: 2, perf: 1, tag: "com", width: 2, height: 1 },
-  { name: "GPS-Modul", shortName: "GPS", points: 30, energy: 4, area: 3, perf: 2, tag: "com", width: 3, height: 1 },
-  { name: "AI-Beschleuniger", shortName: "AI", points: 30, energy: 3, area: 4, perf: 4, tag: "ai", width: 2, height: 2 },
-  { name: "Flash-Speicher", shortName: "FS", points: 15, energy: 1, area: 2, perf: 1, tag: "mem", width: 2, height: 1 },
-  { name: "Sicherheitsblock", shortName: "Sec", points: 10, energy: 1, area: 1, perf: 1, tag: "sec", width: 1, height: 1 }
-];
+// DOM
+const taskSelect = document.getElementById('taskSelect');
+const taskDescEl = document.getElementById('taskDesc');
+const componentLibraryEl = document.getElementById('componentLibrary');
+const gridEl = document.getElementById('chipGrid');
+const sizeSelect = document.getElementById('gridSizeSelect');
 
+// Grid
 let gridSize = 10;
 let grid = [];
 let placedComponents = [];
 let uniqueId = 1;
 
-// DOM
-const gridEl = document.getElementById('chipGrid');
-const componentList = document.getElementById('componentList');
-const sizeSelect = document.getElementById('gridSizeSelect');
-const taskSelect = document.getElementById('taskSelect');
-const taskDescEl = document.getElementById('taskDesc');
+// Komponenten-Library-Daten (wird per loadLibrary geladen)
+let libraryData = {};
 
 // Aufgaben-Auswahl Dropdown initialisieren
 if (taskSelect) {
@@ -69,27 +63,77 @@ function updateBudgetLabels() {
   document.getElementById("areaMax").textContent = currentTask.area;
 }
 
-// Komponentenliste rendern
-function renderComponentList() {
-  componentList.innerHTML = '';
-  components.forEach((comp, i) => {
-    const div = document.createElement('div');
-    div.className = 'component';
-    div.dataset.index = i;
-    div.style.background = getColor(comp.tag);
-    div.setAttribute('draggable', true);
-    div.innerHTML = `<strong>${comp.name}</strong>
-      Punkte: ${comp.points}<br>
-      Energie: ${comp.energy}, Fläche: ${comp.area}, Leistung: ${comp.perf}`;
-    div.addEventListener("dragstart", e => {
-      e.dataTransfer.setData("type", "component");
-      e.dataTransfer.setData("compIndex", i);
+// ---- Komponenten-Library laden & rendern ----
+
+async function loadLibrary() {
+  // Passe hier Gruppen und JSON-Dateien an
+  const groups = [
+    { name: "Prozessoren",   file: "library/cpus.json" },
+    { name: "Kommunikation", file: "library/comms.json" },
+    { name: "KI-Beschleuniger", file: "library/ai.json" },
+    { name: "Speicher", file: "library/memory.json" },
+    { name: "Sicherheit", file: "library/security.json" }
+  ];
+
+  const data = {};
+  for (const group of groups) {
+    try {
+      const resp = await fetch(group.file);
+      if (!resp.ok) continue;
+      data[group.name] = await resp.json();
+    } catch(e) {
+      // Datei nicht gefunden o.ä.
+    }
+  }
+  libraryData = data;
+  renderAccordion(libraryData);
+}
+
+function renderAccordion(data) {
+  componentLibraryEl.innerHTML = '';
+  Object.entries(data).forEach(([groupName, comps], groupIdx) => {
+    const section = document.createElement('section');
+    section.className = 'comp-group';
+
+    // Header
+    const header = document.createElement('div');
+    header.className = 'comp-group-header';
+    header.textContent = `▼ ${groupName}`;
+    header.dataset.group = groupName;
+    header.style.cursor = 'pointer';
+
+    // Content
+    const content = document.createElement('div');
+    content.className = 'comp-group-content';
+    content.style.display = groupIdx === 0 ? 'block' : 'none';
+
+    comps.forEach((comp, i) => {
+      const div = document.createElement('div');
+      div.className = 'component';
+      div.setAttribute('draggable', true);
+      div.innerHTML = `<strong>${comp.name}</strong>
+        ${comp.brand ? `<br><small>${comp.brand}</small>` : ""}
+        <br>Punkte: ${comp.points}, Energie: ${comp.energy}, Fläche: ${comp.area}, Leistung: ${comp.perf}`;
+      div.addEventListener("dragstart", e => {
+        e.dataTransfer.setData("type", "component");
+        e.dataTransfer.setData("componentObj", JSON.stringify(comp));
+      });
+      content.appendChild(div);
     });
-    componentList.appendChild(div);
+
+    header.addEventListener('click', () => {
+      content.style.display = (content.style.display === 'none') ? 'block' : 'none';
+      header.textContent = `${content.style.display === 'block' ? '▼' : '►'} ${groupName}`;
+    });
+
+    section.appendChild(header);
+    section.appendChild(content);
+    componentLibraryEl.appendChild(section);
   });
 }
 
-// Grid bauen
+// ----------- GRID -----------
+
 function buildGrid() {
   grid = [];
   gridEl.innerHTML = '';
@@ -111,23 +155,24 @@ function buildGrid() {
   }
 }
 
-// Farben je Typ
+// ----------- Farben je Komponententyp -----------
+
 function getColor(tag) {
   return {
     cpu: "#5e81ac", com: "#a3be8c", ai: "#b48ead", sec: "#ebcb8b", mem: "#d08770"
   }[tag] || "#d8dee9";
 }
 
-// --- Drag & Drop / Platzieren und Verschieben ---
+// ----------- Drag & Drop / Platzieren und Verschieben -----------
+
 function handleDrop(e) {
   const type = e.dataTransfer.getData("type");
   const x = Number(e.target.dataset.x);
   const y = Number(e.target.dataset.y);
 
   if (type === "component") {
-    // Aus Komponentenliste
-    const index = Number(e.dataTransfer.getData("compIndex"));
-    const comp = components[index];
+    // Aus Komponentenbibliothek
+    const comp = JSON.parse(e.dataTransfer.getData("componentObj"));
     if (canPlace(x, y, comp)) {
       placeComponent(x, y, comp);
       updateStats();
@@ -197,7 +242,6 @@ function placeComponent(x, y, comp, forceId = null) {
   }
 }
 
-// Entfernen einer Instanz (nur eine)
 function removeComponent(instanceId, update = true) {
   placedComponents = placedComponents.filter(c => c.id !== instanceId);
   for (let row of grid) {
@@ -216,6 +260,8 @@ function removeComponent(instanceId, update = true) {
   }
   if (update) updateStats();
 }
+
+// ----------- Statistiken & Budget -----------
 
 function updateStats() {
   let points = 0, energy = 0, area = 0, perf = 0;
@@ -242,7 +288,8 @@ function updateStats() {
       : `<span class="warning">${messages.join("<br>")}</span>`;
 }
 
-// Chipgröße ändern (Dropdown)
+// ----------- Chipgröße ändern (Dropdown) -----------
+
 sizeSelect.addEventListener("change", () => {
   gridSize = parseInt(sizeSelect.value);
   rerender();
@@ -260,9 +307,10 @@ function rerender() {
   updateStats();
 }
 
-// Initialisierung
-renderComponentList();
+// ----------- Initialisierung -----------
+
 buildGrid();
 updateBudgetLabels();
 updateTaskDesc();
 updateStats();
+loadLibrary();

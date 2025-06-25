@@ -1,0 +1,35 @@
+[
+  {
+    "name": "Bluetooth LE",
+    "shortName": "BT",
+    "points": 20,
+    "energy": 2,
+    "area": 2,
+    "perf": 1,
+    "tag": "com",
+    "width": 2,
+    "height": 1
+  },
+  {
+    "name": "GPS-Modul",
+    "shortName": "GPS",
+    "points": 30,
+    "energy": 4,
+    "area": 3,
+    "perf": 2,
+    "tag": "com",
+    "width": 3,
+    "height": 1
+  },
+  {
+    "name": "WLAN 6E",
+    "shortName": "WiFi6E",
+    "points": 38,
+    "energy": 5,
+    "area": 3,
+    "perf": 3,
+    "tag": "com",
+    "width": 3,
+    "height": 1
+  }
+]

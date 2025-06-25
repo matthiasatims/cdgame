@@ -1,0 +1,62 @@
+[
+  {
+    "name": "CPU-Kern (Custom)",
+    "shortName": "CPU",
+    "points": 15,
+    "energy": 2,
+    "area": 2,
+    "perf": 1,
+    "tag": "cpu",
+    "width": 2,
+    "height": 1,
+    "brand": "Custom"
+  },
+  {
+    "name": "ARM Cortex-A78",
+    "shortName": "A78",
+    "points": 28,
+    "energy": 4,
+    "area": 3,
+    "perf": 5,
+    "tag": "cpu",
+    "width": 3,
+    "height": 1,
+    "brand": "ARM"
+  },
+  {
+    "name": "ARM Cortex-X4",
+    "shortName": "X4",
+    "points": 42,
+    "energy": 6,
+    "area": 4,
+    "perf": 9,
+    "tag": "cpu",
+    "width": 4,
+    "height": 1,
+    "brand": "ARM"
+  },
+  {
+    "name": "AMD Ryzen 7 7840U",
+    "shortName": "R7-7840U",
+    "points": 90,
+    "energy": 14,
+    "area": 9,
+    "perf": 30,
+    "tag": "cpu",
+    "width": 5,
+    "height": 2,
+    "brand": "AMD"
+  },
+  {
+    "name": "Intel Core i7-1365U",
+    "shortName": "i7-1365U",
+    "points": 82,
+    "energy": 12,
+    "area": 8,
+    "perf": 26,
+    "tag": "cpu",
+    "width": 5,
+    "height": 2,
+    "brand": "Intel"
+  }
+]

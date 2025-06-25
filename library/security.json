@@ -1,0 +1,24 @@
+[
+  {
+    "name": "Sicherheitsblock",
+    "shortName": "Sec",
+    "points": 10,
+    "energy": 1,
+    "area": 1,
+    "perf": 1,
+    "tag": "sec",
+    "width": 1,
+    "height": 1
+  },
+  {
+    "name": "TPM 2.0",
+    "shortName": "TPM",
+    "points": 15,
+    "energy": 2,
+    "area": 2,
+    "perf": 2,
+    "tag": "sec",
+    "width": 2,
+    "height": 1
+  }
+]
