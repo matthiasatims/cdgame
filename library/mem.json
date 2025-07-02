@@ -1,5 +1,16 @@
 [
   {
+    "name": "Custom Memory Block",
+    "shortName": "MEM-C",
+    "points": 1,
+    "energy": 1,
+    "area": 1,
+    "perf": 1,
+    "tag": "mem",
+    "width": 1,
+    "height": 1
+  },
+  {
     "name": "Flash-Speicher",
     "shortName": "FS",
     "points": 15,
@@ -12,11 +23,11 @@
   },
   {
     "name": "LPDDR5 RAM",
-    "shortName": "RAM",
-    "points": 22,
+    "shortName": "LPDDR5",
+    "points": 25,
     "energy": 3,
     "area": 3,
-    "perf": 4,
+    "perf": 6,
     "tag": "mem",
     "width": 3,
     "height": 1

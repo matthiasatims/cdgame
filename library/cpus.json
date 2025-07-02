@@ -1,13 +1,13 @@
 [
   {
-    "name": "CPU-Kern (Custom)",
-    "shortName": "CPU",
-    "points": 15,
-    "energy": 2,
-    "area": 2,
+    "name": "Custom CPU Block",
+    "shortName": "CPU-C",
+    "points": 1,
+    "energy": 1,
+    "area": 1,
     "perf": 1,
     "tag": "cpu",
-    "width": 2,
+    "width": 1,
     "height": 1,
     "brand": "Custom"
   },
@@ -26,14 +26,38 @@
   {
     "name": "ARM Cortex-X4",
     "shortName": "X4",
-    "points": 42,
+    "points": 40,
     "energy": 6,
     "area": 4,
-    "perf": 9,
+    "perf": 10,
     "tag": "cpu",
     "width": 4,
     "height": 1,
     "brand": "ARM"
+  },
+  {
+    "name": "Apple M2 Performance Core",
+    "shortName": "M2-P",
+    "points": 50,
+    "energy": 8,
+    "area": 5,
+    "perf": 15,
+    "tag": "cpu",
+    "width": 4,
+    "height": 1,
+    "brand": "Apple"
+  },
+  {
+    "name": "Apple M2 Efficiency Core",
+    "shortName": "M2-E",
+    "points": 20,
+    "energy": 2,
+    "area": 2,
+    "perf": 4,
+    "tag": "cpu",
+    "width": 2,
+    "height": 1,
+    "brand": "Apple"
   },
   {
     "name": "AMD Ryzen 7 7840U",
@@ -48,6 +72,18 @@
     "brand": "AMD"
   },
   {
+    "name": "AMD Ryzen 9 7950X",
+    "shortName": "R9-7950X",
+    "points": 150,
+    "energy": 22,
+    "area": 14,
+    "perf": 48,
+    "tag": "cpu",
+    "width": 7,
+    "height": 2,
+    "brand": "AMD"
+  },
+  {
     "name": "Intel Core i7-1365U",
     "shortName": "i7-1365U",
     "points": 82,
@@ -58,5 +94,54 @@
     "width": 5,
     "height": 2,
     "brand": "Intel"
+  },
+  {
+    "name": "Intel Core i9-13900K",
+    "shortName": "i9-13900K",
+    "points": 170,
+    "energy": 25,
+    "area": 16,
+    "perf": 55,
+    "tag": "cpu",
+    "width": 8,
+    "height": 2,
+    "brand": "Intel"
+  },
+  {
+    "name": "RISC-V U74 Standard Core",
+    "shortName": "U74",
+    "points": 25,
+    "energy": 3,
+    "area": 2,
+    "perf": 4,
+    "tag": "cpu",
+    "width": 2,
+    "height": 1,
+    "brand": "RISC-V"
+  },
+  {
+    "name": "SiFive Performance P670",
+    "shortName": "P670",
+    "points": 35,
+    "energy": 5,
+    "area": 3,
+    "perf": 7,
+    "tag": "cpu",
+    "width": 3,
+    "height": 1,
+    "brand": "RISC-V"
+  },
+  {
+    "name": "ARM Cortex-M33",
+    "shortName": "M33",
+    "points": 8,
+    "energy": 1,
+    "area": 1,
+    "perf": 2,
+    "tag": "cpu",
+    "width": 1,
+    "height": 1,
+    "brand": "ARM"
   }
+
 ]

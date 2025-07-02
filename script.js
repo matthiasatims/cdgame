@@ -14,6 +14,13 @@ const tasks = {
     name: "Low Power",
     desc: "Baue einen Chip für besonders niedrigen Energieverbrauch und kleine Fläche.",
     points: 80, energy: 5, area: 10
+  },
+  custom: {
+    name: "Custom Design",
+    desc: "Erstelle ein beliebiges Chipdesign – ohne jegliche Einschränkungen.",
+    points: Infinity,
+    energy: Infinity,
+    area: Infinity
   }
 };
 let currentTask = tasks.task1;
@@ -278,9 +285,9 @@ function updateStats() {
   document.getElementById("perf").textContent = perf;
 
   const messages = [];
-  if (points > currentTask.points) messages.push("❌ Punkte zu hoch");
-  if (energy > currentTask.energy) messages.push("❌ Energie zu hoch");
-  if (area > currentTask.area) messages.push("❌ Fläche zu groß");
+  if (currentTask.points !== Infinity && points > currentTask.points) messages.push("❌ Punkte zu hoch");
+  if (currentTask.energy !== Infinity && energy > currentTask.energy) messages.push("❌ Energie zu hoch");
+  if (currentTask.area !== Infinity && area > currentTask.area) messages.push("❌ Fläche zu groß");
 
   document.getElementById("result").innerHTML =
     messages.length === 0

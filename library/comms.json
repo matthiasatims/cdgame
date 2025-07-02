@@ -1,5 +1,16 @@
 [
   {
+    "name": "Custom Communication Block",
+    "shortName": "COM-C",
+    "points": 1,
+    "energy": 1,
+    "area": 1,
+    "perf": 1,
+    "tag": "com",
+    "width": 1,
+    "height": 1
+  },
+  {
     "name": "Bluetooth LE",
     "shortName": "BT",
     "points": 20,

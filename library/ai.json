@@ -1,0 +1,35 @@
+[
+  {
+    "name": "Custom AI Block",
+    "shortName": "AI-C",
+    "points": 1,
+    "energy": 1,
+    "area": 1,
+    "perf": 1,
+    "tag": "ai",
+    "width": 1,
+    "height": 1
+  },
+  {
+    "name": "AI-Beschleuniger (Custom)",
+    "shortName": "AI",
+    "points": 30,
+    "energy": 3,
+    "area": 4,
+    "perf": 4,
+    "tag": "ai",
+    "width": 2,
+    "height": 2
+  },
+  {
+    "name": "Apple Neural Engine (ANE)",
+    "shortName": "ANE",
+    "points": 52,
+    "energy": 6,
+    "area": 5,
+    "perf": 15,
+    "tag": "ai",
+    "width": 3,
+    "height": 2
+  }
+]
