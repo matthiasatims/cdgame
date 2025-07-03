@@ -1,0 +1,27 @@
+{
+  "title": "Chipdesigner Pro",
+  "tasks": {
+    "task1": { "name": "Standard", "desc": "Entwerfe einen Standard-Chip mit ausgewogenem Verhältnis von Leistung, Energie und Fläche." },
+    "task2": { "name": "High Performance", "desc": "Maximiere die Leistung für High-Performance-Anwendungen. Großes Budget, aber auch anspruchsvoll." },
+    "task3": { "name": "Low Power", "desc": "Baue einen Chip für besonders niedrigen Energieverbrauch und kleine Fläche." },
+    "custom": { "name": "Custom Design", "desc": "Erstelle ein beliebiges Chipdesign – ohne jegliche Einschränkungen." }
+  },
+  "categories": {
+    "cpus": "Prozessoren",
+    "ai": "KI-Beschleuniger",
+    "comms": "Kommunikation",
+    "memory": "Speicher",
+    "security": "Sicherheit"
+  },
+  "buttons": {
+    "next": "Weiter",
+    "back": "Zurück"
+  },
+  "stats": {
+    "points": "Punkte",
+    "energy": "Energie",
+    "area": "Fläche",
+    "perf": "Leistung",
+    "result_success": "✅ Chip erfüllt alle Anforderungen"
+  }
+}

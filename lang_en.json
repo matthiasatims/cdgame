@@ -1,0 +1,27 @@
+{
+  "title": "Chipdesigner Pro",
+  "tasks": {
+    "task1": { "name": "Standard", "desc": "Design a balanced chip with a well-matched ratio of performance, energy and area." },
+    "task2": { "name": "High Performance", "desc": "Maximize performance for high-end applications. High budget but challenging." },
+    "task3": { "name": "Low Power", "desc": "Build a chip for ultra-low power and compact area." },
+    "custom": { "name": "Custom Design", "desc": "Create any chip design – no restrictions at all." }
+  },
+  "categories": {
+    "cpus": "Processors",
+    "ai": "AI Accelerators",
+    "comms": "Communication",
+    "memory": "Memory",
+    "security": "Security"
+  },
+  "buttons": {
+    "next": "Next",
+    "back": "Back"
+  },
+  "stats": {
+    "points": "Points",
+    "energy": "Energy",
+    "area": "Area",
+    "perf": "Performance",
+    "result_success": "✅ Chip meets all requirements"
+  }
+}
