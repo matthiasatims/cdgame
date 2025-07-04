@@ -15,7 +15,8 @@
   },
   "buttons": {
     "next": "Next",
-    "back": "Back"
+    "back": "Back",
+    "taskselect": "Select task"
   },
   "stats": {
     "points": "Points",

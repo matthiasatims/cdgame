@@ -17,6 +17,8 @@ let grid = [];
 let placedComponents = [];
 let uniqueId = 1;
 
+let dragPreviewComp = null; // Für die Ghost-Preview
+
 // ----- UI RENDERING -----
 async function renderApp() {
   document.body.lang = currentLang;
@@ -155,10 +157,11 @@ async function renderComponentLibrary() {
         ${comp.brand ? `<br><small>${comp.brand}</small>` : ""}
         <br>${langData.stats.points}: ${comp.points}, ${langData.stats.energy}: ${comp.energy}, ${langData.stats.area}: ${comp.area}, ${langData.stats.perf}: ${comp.perf}`;
       div.addEventListener("dragstart", e => {
+        dragPreviewComp = comp;
         e.dataTransfer.setData("type", "component");
         e.dataTransfer.setData("componentObj", JSON.stringify(comp));
       });
-      // Touch für Mobile
+      // Touch für Mobile (Preview kann hier ergänzt werden)
       div.addEventListener("touchstart", e => {
         window.touchSelectedComp = comp;
         div.classList.add("selected");
@@ -198,9 +201,25 @@ function buildGrid() {
       cell.className = 'cell';
       cell.dataset.x = x;
       cell.dataset.y = y;
-      cell.addEventListener("dragover", e => e.preventDefault());
-      cell.addEventListener("drop", handleDrop);
-      // Touch für Mobile
+
+      // Drag Preview & Drop:
+      cell.addEventListener("dragover", e => {
+        e.preventDefault();
+        clearPreview();
+        if (dragPreviewComp) {
+          showPreview(x, y, dragPreviewComp);
+        }
+      });
+      cell.addEventListener("dragleave", e => {
+        clearPreview();
+      });
+      cell.addEventListener("drop", e => {
+        clearPreview();
+        handleDrop(e);
+        dragPreviewComp = null;
+      });
+
+      // Touch für Mobile (Preview könntest du so ergänzen)
       cell.addEventListener("touchstart", e => {
         if (window.touchSelectedComp) {
           handlePlace(window.touchSelectedComp, x, y);
@@ -208,6 +227,7 @@ function buildGrid() {
           e.preventDefault();
         }
       });
+
       grid[y][x] = { occupied: false, el: cell, compId: null, instanceId: null };
       gridEl.appendChild(cell);
     }
@@ -217,6 +237,26 @@ function buildGrid() {
 function rerenderGrid() {
   buildGrid();
   updateStats();
+}
+
+// ----- DRAG PREVIEW -----
+function clearPreview() {
+  for (let row of grid) for (let cell of row) {
+    cell.el.classList.remove("preview", "invalid");
+  }
+}
+
+function showPreview(x, y, comp) {
+  let valid = canPlace(x, y, comp);
+  for (let dy = 0; dy < comp.height; dy++) {
+    for (let dx = 0; dx < comp.width; dx++) {
+      let tx = x + dx, ty = y + dy;
+      if (grid[ty] && grid[ty][tx]) {
+        grid[ty][tx].el.classList.add("preview");
+        if (!valid) grid[ty][tx].el.classList.add("invalid");
+      }
+    }
+  }
 }
 
 // ----- Drag & Drop -----

@@ -15,7 +15,8 @@
   },
   "buttons": {
     "next": "Weiter",
-    "back": "Zurück"
+    "back": "Zurück",
+    "taskselect": "Aufgabe auswählen"
   },
   "stats": {
     "points": "Punkte",

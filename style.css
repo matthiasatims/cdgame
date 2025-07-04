@@ -32,3 +32,11 @@ select { margin-bottom: 8px; padding: 2px 10px; border-radius: 5px; }
   .game-layout { flex-direction: column; gap: 16px; }
   .comp-lib { max-width: 100%; }
 }
+.cell.preview {
+  outline: 2px dashed #0077ff;
+  background: #a3b9ff70 !important;
+}
+.cell.preview.invalid {
+  outline: 2px dashed #ff3333;
+  background: #ffd4d4 !important;
+}
